@@ -1,0 +1,1520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HAID - Health AI Data Resource</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary: #10b981;
+            --bg-light: #f8fafc;
+            --bg-white: #ffffff;
+            --text-dark: #1e293b;
+            --text-gray: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: var(--bg-light);
+        }
+
+        /* Header */
+        header {
+            background: var(--bg-white);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        nav {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            opacity: 0.95;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: white;
+            color: var(--primary);
+            text-decoration: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: var(--primary);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* Section Headers */
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .section-header p {
+            color: var(--text-gray);
+            font-size: 1.1rem;
+        }
+
+        /* Data Discovery Dashboard */
+        .discovery-section {
+            background: var(--bg-white);
+            padding: 3rem 0;
+        }
+
+        .search-filter {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .filter-select {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            background: white;
+            cursor: pointer;
+        }
+
+        .dataset-list-item {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .dataset-list-item:hover {
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
+        }
+
+        .dataset-list-header {
+            padding: 1.5rem;
+            background: var(--bg-light);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .dataset-list-header:hover {
+            background: #e0e7ff;
+        }
+
+        .dataset-list-title-section {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .dataset-list-badges {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .expand-icon {
+            font-size: 1.5rem;
+            transition: transform 0.3s;
+            color: var(--primary);
+        }
+
+        .expand-icon.expanded {
+            transform: rotate(180deg);
+        }
+
+        .dataset-list-body {
+            padding: 2rem;
+            display: none;
+            border-top: 2px solid var(--primary);
+        }
+
+        .dataset-list-body.expanded {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dataset-section {
+            margin-bottom: 2rem;
+        }
+
+        .dataset-section h4 {
+            color: var(--primary);
+            font-size: 1.15rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .dataset-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-box {
+            background: var(--bg-light);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border-left: 3px solid var(--primary);
+        }
+
+        .info-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-gray);
+            margin-bottom: 0.25rem;
+        }
+
+        .info-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .feature-list li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--text-gray);
+            line-height: 1.6;
+        }
+
+        .feature-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--secondary);
+            font-weight: 700;
+        }
+
+        .citation-box {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--primary);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            margin-top: 1rem;
+        }
+
+        .dataset-actions {
+            display: flex;
+            gap: 1rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        /* Features Section */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: var(--bg-white);
+            padding: 2rem;
+            border-radius: 0.75rem;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card p {
+            color: var(--text-gray);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--text-dark);
+            color: white;
+            padding: 3rem 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-section h4 {
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .footer-section a {
+            color: #94a3b8;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #374151;
+            color: #94a3b8;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background: var(--bg-white);
+            max-width: 900px;
+            margin: 2rem auto;
+            border-radius: 1rem;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 2rem;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            background: var(--bg-white);
+            z-index: 10;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--text-gray);
+            background: none;
+            border: none;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background: var(--bg-light);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+        }
+
+        .stat-card-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-card-label {
+            font-size: 0.85rem;
+            color: var(--text-gray);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .dataset-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <a href="#" class="logo">HAID</a>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#discovery">Data Discovery</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="https://github.com/fitushar/HAID" target="_blank">GitHub</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <h1>Health AI Data Resource</h1>
+        <p>Curated, preprocessed, and research-ready medical imaging datasets for AI/ML development in radiology and healthcare</p>
+        
+        <div class="hero-stats">
+            <div class="stat">
+                <span class="stat-number">13</span>
+                <span class="stat-label">Datasets Available</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">30K+</span>
+                <span class="stat-label">CT Scans</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">25K+</span>
+                <span class="stat-label">Patients</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">100%</span>
+                <span class="stat-label">Open Access</span>
+            </div>
+        </div>
+
+        <div style="margin-top: 2rem;">
+            <a href="#discovery" class="btn">Explore Datasets</a>
+            <a href="https://github.com/fitushar/HAID" class="btn btn-secondary" target="_blank">View on GitHub</a>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="container" id="features">
+        <div class="section-header">
+            <h2>Why Choose HAID?</h2>
+            <p>Accelerate your AI research with standardized, high-quality medical imaging data</p>
+        </div>
+
+        <!-- Video Introduction -->
+        <div style="max-width: 900px; margin: 0 auto 3rem; background: var(--bg-white); padding: 2rem; border-radius: 1rem; border: 1px solid var(--border);">
+            <h3 style="text-align: center; margin-bottom: 1.5rem; color: var(--text-dark); font-size: 1.5rem;">📹 Introduction to HAID</h3>
+            <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 0.75rem; box-shadow: var(--shadow-lg);">
+                <iframe 
+                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" 
+                    src="https://www.youtube.com/embed/eJybx-j_ynI" 
+                    title="HAID Introduction Video" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <p style="text-align: center; margin-top: 1rem; color: var(--text-gray); font-size: 0.9rem;">
+                Watch this video to learn about HAID's mission, dataset collection, and how to get started with our resources
+            </p>
+        </div>
+
+        <!-- PDF Presentation -->
+        <div style="max-width: 900px; margin: 0 auto 3rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 2rem; border-radius: 1rem; color: white;">
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem;">
+                <div style="flex: 1; min-width: 300px;">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 0.75rem; color: white;">📄 HAID Presentation</h3>
+                    <p style="opacity: 0.95; line-height: 1.6; margin-bottom: 1rem;">
+                        Download our comprehensive PDF presentation covering the complete HAID dataset collection, technical specifications, and research applications.
+                    </p>
+                    <ul style="opacity: 0.9; line-height: 1.8; padding-left: 1.25rem; margin-bottom: 1.5rem;">
+                        <li>Complete dataset overview and statistics</li>
+                        <li>Technical specifications and preprocessing details</li>
+                        <li>Research applications and use cases</li>
+                        <li>Citation guidelines and licensing information</li>
+                    </ul>
+                </div>
+                <div style="text-align: center;">
+                    <a href="https://github.com/fitushar/HAID/raw/main/Documentations/NotebookLLM_Contents/Health_AI_Data_Resource_HAID.pdf" 
+                       target="_blank" 
+                       download
+                       class="btn" 
+                       style="font-size: 1rem; padding: 0.875rem 2rem; background: white; color: var(--primary); box-shadow: var(--shadow-lg); display: inline-flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1.25rem;">📥</span>
+                        Download PDF
+                    </a>
+                    <div style="margin-top: 0.75rem; font-size: 0.85rem; opacity: 0.85;">
+                        Comprehensive presentation deck
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive PDF Viewer -->
+        <div style="max-width: 900px; margin: 0 auto 3rem; background: var(--bg-white); padding: 2rem; border-radius: 1rem; border: 1px solid var(--border);">
+            <h3 style="text-align: center; margin-bottom: 1.5rem; color: var(--text-dark); font-size: 1.5rem;">📖 Preview HAID Presentation</h3>
+            <div style="position: relative; width: 100%; height: 600px; border-radius: 0.75rem; overflow: hidden; box-shadow: var(--shadow-lg);">
+                <iframe 
+                    style="width: 100%; height: 100%; border: 0;" 
+                    src="https://docs.google.com/viewer?url=https://github.com/fitushar/HAID/raw/main/Documentations/NotebookLLM_Contents/Health_AI_Data_Resource_HAID.pdf&embedded=true"
+                    title="HAID Presentation PDF">
+                </iframe>
+            </div>
+            <p style="text-align: center; margin-top: 1rem; color: var(--text-gray); font-size: 0.9rem;">
+                Browse the presentation online or download the PDF for offline viewing
+            </p>
+        </div>
+
+        <!-- NotebookLLM Interactive Learning -->
+        <div style="max-width: 900px; margin: 0 auto 3rem; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 2rem; border-radius: 1rem; color: white; box-shadow: var(--shadow-lg);">
+            <div style="text-align: center; margin-bottom: 1.5rem;">
+                <div style="font-size: 3rem; margin-bottom: 0.5rem;">🤖</div>
+                <h3 style="font-size: 1.75rem; margin-bottom: 0.75rem; color: white;">Interactive Learning with NotebookLLM</h3>
+                <p style="opacity: 0.95; font-size: 1.1rem; max-width: 700px; margin: 0 auto;">
+                    Explore HAID resources through AI-powered conversations and get instant answers to your questions
+                </p>
+            </div>
+
+            <div style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); padding: 1.5rem; border-radius: 0.75rem; margin-bottom: 1.5rem;">
+                <h4 style="font-size: 1.15rem; margin-bottom: 1rem; color: white;">✨ What you can do:</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                    <div style="display: flex; gap: 0.5rem; align-items: start;">
+                        <span style="font-size: 1.25rem;">💬</span>
+                        <span style="opacity: 0.95;">Ask questions about specific datasets</span>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; align-items: start;">
+                        <span style="font-size: 1.25rem;">🔍</span>
+                        <span style="opacity: 0.95;">Compare preprocessing pipelines</span>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; align-items: start;">
+                        <span style="font-size: 1.25rem;">📊</span>
+                        <span style="opacity: 0.95;">Explore technical specifications</span>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; align-items: start;">
+                        <span style="font-size: 1.25rem;">🎓</span>
+                        <span style="opacity: 0.95;">Learn about annotation methods</span>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; align-items: start;">
+                        <span style="font-size: 1.25rem;">📚</span>
+                        <span style="opacity: 0.95;">Get citation information</span>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; align-items: start;">
+                        <span style="font-size: 1.25rem;">🔬</span>
+                        <span style="opacity: 0.95;">Discover research applications</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <a href="https://notebooklm.google.com/notebook/65820f9a-15d7-412d-b466-a196fde2e2c9" 
+                   target="_blank" 
+                   class="btn" 
+                   style="font-size: 1.1rem; padding: 1rem 2.5rem; background: white; color: #4facfe; box-shadow: var(--shadow-lg); display: inline-flex; align-items: center; gap: 0.75rem; font-weight: 700;">
+                    <span style="font-size: 1.5rem;">🚀</span>
+                    Launch NotebookLLM
+                </a>
+                <div style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.9;">
+                    Powered by Google NotebookLLM - Interactive AI assistant for HAID resources
+                </div>
+            </div>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Standardized Preprocessing</h3>
+                <p>All datasets follow consistent preprocessing pipelines with uniform spacing and formats</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📚</div>
+                <h3>Comprehensive Documentation</h3>
+                <p>Detailed documentation, Jupyter notebooks, and reference implementations</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">✅</div>
+                <h3>Ready-to-Use Annotations</h3>
+                <p>Expert-validated segmentations, bounding boxes, and clinical labels</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔬</div>
+                <h3>Train/Val/Test Splits</h3>
+                <p>Pre-defined splits for reproducible benchmarking and model evaluation</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dataset Overview Block -->
+    <section class="container" style="margin-top: 3rem;">
+        <div class="section-header">
+            <h2>Dataset Collection Overview</h2>
+            <p>Comprehensive medical imaging datasets with standardized preprocessing and expert annotations for reproducible AI research</p>
+        </div>
+
+        <!-- Research Impact Metrics -->
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 1rem; margin-bottom: 3rem;">
+            <h3 style="text-align: center; margin-bottom: 1.5rem; font-size: 1.5rem;">Research-Ready Collection</h3>
+            <div class="stats-grid" style="max-width: 100%;">
+                <div style="text-align: center; padding: 1rem;">
+                    <div style="font-size: 2.5rem; font-weight: 700;">13</div>
+                    <div style="font-size: 0.9rem; opacity: 0.9;">Curated Datasets</div>
+                </div>
+                <div style="text-align: center; padding: 1rem;">
+                    <div style="font-size: 2.5rem; font-weight: 700;">30K+</div>
+                    <div style="font-size: 0.9rem; opacity: 0.9;">CT Volumes</div>
+                </div>
+                <div style="text-align: center; padding: 1rem;">
+                    <div style="font-size: 2.5rem; font-weight: 700;">25K+</div>
+                    <div style="font-size: 0.9rem; opacity: 0.9;">Unique Patients</div>
+                </div>
+                <div style="text-align: center; padding: 1rem;">
+                    <div style="font-size: 2.5rem; font-weight: 700;">50K+</div>
+                    <div style="font-size: 0.9rem; opacity: 0.9;">Annotated Lesions</div>
+                </div>
+                <div style="text-align: center; padding: 1rem;">
+                    <div style="font-size: 2.5rem; font-weight: 700;">10+</div>
+                    <div style="font-size: 0.9rem; opacity: 0.9;">Countries</div>
+                </div>
+                <div style="text-align: center; padding: 1rem;">
+                    <div style="font-size: 2.5rem; font-weight: 700;">100%</div>
+                    <div style="font-size: 0.9rem; opacity: 0.9;">Open Access</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Research Applications -->
+        <div style="margin-bottom: 3rem;">
+            <h3 style="text-align: center; margin-bottom: 2rem; color: var(--text-dark); font-size: 1.75rem;">Research Applications & Tasks</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+                <div style="background: var(--bg-white); padding: 1.5rem; border-radius: 0.75rem; border-left: 4px solid #667eea;">
+                    <h4 style="color: var(--primary); margin-bottom: 0.75rem; font-size: 1.1rem;">🎯 Detection & Localization</h4>
+                    <ul style="color: var(--text-gray); line-height: 1.8; padding-left: 1.25rem; margin: 0;">
+                        <li>Lung nodule detection (6 datasets)</li>
+                        <li>Universal lesion detection (8 organs)</li>
+                        <li>COVID-19 pattern recognition</li>
+                        <li>Multi-organ localization</li>
+                    </ul>
+                </div>
+                <div style="background: var(--bg-white); padding: 1.5rem; border-radius: 0.75rem; border-left: 4px solid #f093fb;">
+                    <h4 style="color: #f093fb; margin-bottom: 0.75rem; font-size: 1.1rem;">🔬 Segmentation</h4>
+                    <ul style="color: var(--text-gray); line-height: 1.8; padding-left: 1.25rem; margin: 0;">
+                        <li>Multi-reader nodule segmentation</li>
+                        <li>Tumor boundary delineation</li>
+                        <li>Organ segmentation (Vista3D)</li>
+                        <li>AI-powered PiNS segmentation</li>
+                    </ul>
+                </div>
+                <div style="background: var(--bg-white); padding: 1.5rem; border-radius: 0.75rem; border-left: 4px solid #4facfe;">
+                    <h4 style="color: #4facfe; margin-bottom: 0.75rem; font-size: 1.1rem;">📊 Classification & Diagnosis</h4>
+                    <ul style="color: var(--text-gray); line-height: 1.8; padding-left: 1.25rem; margin: 0;">
+                        <li>Benign vs. malignant classification</li>
+                        <li>Lung-RADS scoring</li>
+                        <li>Histopathology-confirmed labels</li>
+                        <li>Multi-label finding prediction</li>
+                    </ul>
+                </div>
+                <div style="background: var(--bg-white); padding: 1.5rem; border-radius: 0.75rem; border-left: 4px solid #10b981;">
+                    <h4 style="color: #10b981; margin-bottom: 0.75rem; font-size: 1.1rem;">💡 Advanced Research</h4>
+                    <ul style="color: var(--text-gray); line-height: 1.8; padding-left: 1.25rem; margin: 0;">
+                        <li>Radiomics feature extraction</li>
+                        <li>Survival prediction modeling</li>
+                        <li>Multi-institutional validation</li>
+                        <li>Federated learning studies</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dataset Composition by Clinical Task -->
+        <div style="background: var(--bg-white); padding: 2rem; border-radius: 1rem; border: 1px solid var(--border); margin-bottom: 3rem;">
+            <h3 style="text-align: center; margin-bottom: 2rem; color: var(--text-dark); font-size: 1.75rem;">Dataset Composition by Clinical Domain</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
+                <div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                        <h4 style="color: var(--primary); font-size: 1.15rem;">🫁 Lung Cancer & Screening</h4>
+                        <span style="background: var(--primary); color: white; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.85rem; font-weight: 600;">10 Datasets</span>
+                    </div>
+                    <div style="background: var(--bg-light); padding: 1rem; border-radius: 0.5rem; margin-bottom: 0.75rem;">
+                        <div style="font-size: 0.9rem; color: var(--text-gray); margin-bottom: 0.5rem;">📍 Coverage</div>
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                            <div><strong>20,074</strong> patients</div>
+                            <div><strong>22,000+</strong> CT scans</div>
+                            <div><strong>60K+</strong> nodules</div>
+                        </div>
+                    </div>
+                    <div style="font-size: 0.85rem; color: var(--text-gray); line-height: 1.6;">
+                        Includes NSCLC-Radiomics, UniToChest, IMDCT, LNDb, LUNGx, LIDC-IDRI, LUNA25, NLST-3D, DLCS 2024, DeepLesion
+                    </div>
+                </div>
+
+                <div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                        <h4 style="color: #f093fb; font-size: 1.15rem;">🦠 COVID-19 Imaging</h4>
+                        <span style="background: #f093fb; color: white; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.85rem; font-weight: 600;">3 Datasets</span>
+                    </div>
+                    <div style="background: var(--bg-light); padding: 1rem; border-radius: 0.5rem; margin-bottom: 0.75rem;">
+                        <div style="font-size: 0.9rem; color: var(--text-gray); margin-bottom: 0.5rem;">📍 Coverage</div>
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                            <div><strong>17,567</strong> patients</div>
+                            <div><strong>20,397+</strong> CT scans</div>
+                            <div><strong>RT-PCR</strong> confirmed</div>
+                        </div>
+                    </div>
+                    <div style="font-size: 0.85rem; color: var(--text-gray); line-height: 1.6;">
+                        Includes BIMCV-R, MIDRC-RICORD, U-10 with multi-institutional validation and bilingual reports
+                    </div>
+                </div>
+
+                <div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                        <h4 style="color: #4facfe; font-size: 1.15rem;">🔬 Universal Lesion Detection</h4>
+                        <span style="background: #4facfe; color: white; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.85rem; font-weight: 600;">1 Dataset</span>
+                    </div>
+                    <div style="background: var(--bg-light); padding: 1rem; border-radius: 0.5rem; margin-bottom: 0.75rem;">
+                        <div style="font-size: 0.9rem; color: var(--text-gray); margin-bottom: 0.5rem;">📍 Coverage</div>
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                            <div><strong>10,594</strong> patients</div>
+                            <div><strong>1,000</strong> test volumes</div>
+                            <div><strong>8</strong> body regions</div>
+                        </div>
+                    </div>
+                    <div style="font-size: 0.85rem; color: var(--text-gray); line-height: 1.6;">
+                        DeepLesion with 4,927 annotated lesions spanning lung, liver, kidney, bone, abdomen, mediastinum, pelvis, soft tissue
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technical Specifications -->
+        <div style="margin-bottom: 3rem;">
+            <h3 style="text-align: center; margin-bottom: 2rem; color: var(--text-dark); font-size: 1.75rem;">Technical Specifications & Data Quality</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                <div style="background: var(--bg-white); padding: 2rem; border-radius: 0.75rem; border: 1px solid var(--border);">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                        <div style="background: var(--primary); color: white; width: 48px; height: 48px; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">📊</div>
+                        <h4 style="color: var(--text-dark); font-size: 1.15rem; margin: 0;">Imaging Protocols</h4>
+                    </div>
+                    <ul style="color: var(--text-gray); line-height: 1.8; padding-left: 1.25rem; margin: 0;">
+                        <li><strong>CT:</strong> 12 datasets (various vendors)</li>
+                        <li><strong>LDCT:</strong> 1 dataset (screening protocol)</li>
+                        <li><strong>Slice thickness:</strong> 1.0-5.0mm</li>
+                        <li><strong>In-plane resolution:</strong> 0.3-1.0mm</li>
+                        <li><strong>Resampled spacing:</strong> [0.7, 0.7, 1.25]mm</li>
+                    </ul>
+                </div>
+
+                <div style="background: var(--bg-white); padding: 2rem; border-radius: 0.75rem; border: 1px solid var(--border);">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                        <div style="background: #10b981; color: white; width: 48px; height: 48px; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">✅</div>
+                        <h4 style="color: var(--text-dark); font-size: 1.15rem; margin: 0;">Annotation Quality</h4>
+                    </div>
+                    <ul style="color: var(--text-gray); line-height: 1.8; padding-left: 1.25rem; margin: 0;">
+                        <li><strong>Expert radiologists:</strong> Board-certified</li>
+                        <li><strong>Multi-reader:</strong> Up to 4 readers/case</li>
+                        <li><strong>Pathology-confirmed:</strong> 3 datasets</li>
+                        <li><strong>AI-augmented:</strong> PiNS + Vista3D</li>
+                        <li><strong>Clinical metadata:</strong> Age, staging, outcomes</li>
+                    </ul>
+                </div>
+
+                <div style="background: var(--bg-white); padding: 2rem; border-radius: 0.75rem; border: 1px solid var(--border);">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                        <div style="background: #f59e0b; color: white; width: 48px; height: 48px; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">🔧</div>
+                        <h4 style="color: var(--text-dark); font-size: 1.15rem; margin: 0;">Preprocessing Pipeline</h4>
+                    </div>
+                    <ul style="color: var(--text-gray); line-height: 1.8; padding-left: 1.25rem; margin: 0;">
+                        <li><strong>Format:</strong> NIfTI standardization</li>
+                        <li><strong>Orientation:</strong> RAS coordinate system</li>
+                        <li><strong>Windowing:</strong> Lung & soft tissue</li>
+                        <li><strong>Normalization:</strong> HU standardization</li>
+                        <li><strong>Splits:</strong> 80/10/10 train/val/test</li>
+                    </ul>
+                </div>
+
+                <div style="background: var(--bg-white); padding: 2rem; border-radius: 0.75rem; border: 1px solid var(--border);">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                        <div style="background: #8b5cf6; color: white; width: 48px; height: 48px; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">📚</div>
+                        <h4 style="color: var(--text-dark); font-size: 1.15rem; margin: 0;">Documentation</h4>
+                    </div>
+                    <ul style="color: var(--text-gray); line-height: 1.8; padding-left: 1.25rem; margin: 0;">
+                        <li><strong>Processing notebooks:</strong> Jupyter</li>
+                        <li><strong>Data dictionaries:</strong> Complete metadata</li>
+                        <li><strong>Citation guidelines:</strong> BibTeX ready</li>
+                        <li><strong>License info:</strong> CC-BY, Apache 2.0</li>
+                        <li><strong>DOI references:</strong> Zenodo, TCIA</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Geographic & Institutional Coverage -->
+        <div style="background: var(--bg-white); padding: 2rem; border-radius: 1rem; border: 1px solid var(--border);">
+            <h3 style="text-align: center; margin-bottom: 2rem; color: var(--text-dark); font-size: 1.75rem;">Geographic & Institutional Distribution</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
+                <div>
+                    <h4 style="color: var(--primary); margin-bottom: 1rem; font-size: 1.1rem;">🌎 North America</h4>
+                    <div style="background: var(--bg-light); padding: 1rem; border-radius: 0.5rem;">
+                        <div style="margin-bottom: 0.5rem;"><strong>6 datasets</strong> from USA</div>
+                        <div style="font-size: 0.85rem; color: var(--text-gray);">NIH, Duke, NLST (33 centers), MIDRC consortium, TCIA archives</div>
+                    </div>
+                </div>
+                <div>
+                    <h4 style="color: var(--primary); margin-bottom: 1rem; font-size: 1.1rem;">🌍 Europe</h4>
+                    <div style="background: var(--bg-light); padding: 1rem; border-radius: 0.5rem;">
+                        <div style="margin-bottom: 0.5rem;"><strong>4 datasets</strong> from 4 countries</div>
+                        <div style="font-size: 0.85rem; color: var(--text-gray);">Netherlands, Italy, Portugal, Spain - multi-institutional collaborations</div>
+                    </div>
+                </div>
+                <div>
+                    <h4 style="color: var(--primary); margin-bottom: 1rem; font-size: 1.1rem;">🌏 Asia</h4>
+                    <div style="background: var(--bg-light); padding: 1rem; border-radius: 0.5rem;">
+                        <div style="margin-bottom: 0.5rem;"><strong>1 dataset</strong> from China</div>
+                        <div style="font-size: 0.85rem; color: var(--text-gray);">Multi-institutional (5 clinical centers) with pathology confirmation</div>
+                    </div>
+                </div>
+                <div>
+                    <h4 style="color: var(--primary); margin-bottom: 1rem; font-size: 1.1rem;">🌐 Multi-National</h4>
+                    <div style="background: var(--bg-light); padding: 1rem; border-radius: 0.5rem;">
+                        <div style="margin-bottom: 0.5rem;"><strong>2 datasets</strong> (aggregated)</div>
+                        <div style="font-size: 0.85rem; color: var(--text-gray);">U-10 collection spanning 10 public datasets globally</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Data Discovery Section -->
+    <section class="discovery-section" id="discovery">
+        <div class="container">
+            <div class="section-header">
+                <h2>Data Discovery Dashboard</h2>
+                <p>Complete catalog of curated medical imaging datasets with full details</p>
+            </div>
+
+            <!-- Dataset Overview Checklist -->
+            <div style="background: var(--bg-white); padding: 2rem; border-radius: 1rem; border: 1px solid var(--border); margin-bottom: 2rem;">
+                <h3 style="color: var(--text-dark); margin-bottom: 1.5rem; font-size: 1.35rem;">📋 Available Datasets Checklist</h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                    <!-- Lung Cancer & Screening -->
+                    <div style="background: var(--bg-light); padding: 1.25rem; border-radius: 0.75rem; border-left: 4px solid #667eea;">
+                        <h4 style="color: #667eea; margin-bottom: 1rem; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <span>🫁</span> Lung Cancer & Screening
+                        </h4>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.9rem;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.25rem;">
+                                <input type="checkbox" checked disabled style="width: 16px; height: 16px;">
+                                <span><strong>NSCLC-Radiomics</strong> (421 patients)</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.25rem;">
+                                <input type="checkbox" checked disabled style="width: 16px; height: 16px;">
+                                <span><strong>UniToChest</strong> (623 patients)</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.25rem;">
+                                <input type="checkbox" checked disabled style="width: 16px; height: 16px;">
+                                <span><strong>IMDCT</strong> (2,032 patients)</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.25rem;">
+                                <input type="checkbox" checked disabled style="width: 16px; height: 16px;">
+                                <span><strong>LNDb v4</strong> (294 patients)</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.25rem;">
+                                <input type="checkbox" checked disabled style="width: 16px; height: 16px;">
+                                <span><strong>LUNGx</strong> (83 patients)</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.25rem;">
+                                <input type="checkbox" checked disabled style="width: 16px; height: 16px;">
+                                <span><strong>LIDC-IDRI</strong> (875 patients)</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.25rem;">
+                                <input type="checkbox" checked disabled style="width: 16px; height: 16px;">
+                                <span><strong>LUNA25</strong> (2,020 patients)</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.25rem;">
+                                <input type="checkbox" checked disabled style="width: 16px; height: 16px;">
+                                <span><strong>NLST-3D</strong> (900 patients)</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.25rem;">
+                                <input type="checkbox" checked disabled style="width: 16px; height: 16px;">
+                                <span><strong>DLCS 2024</strong> (2,061 patients)</span>
+                            </label>
+                        </div>
+                        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); color: #667eea; font-weight: 600;">
+                            9 datasets • 20K+ patients
+                        </div>
+                    </div>
+
+                    <!-- COVID-19 -->
+                    <div style="background: var(--bg-light); padding: 1.25rem; border-radius: 0.75rem; border-left: 4px solid #f093fb;">
+                        <h4 style="color: #f093fb; margin-bottom: 1rem; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <span>🦠</span> COVID-19 Imaging
+                        </h4>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.9rem;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.25rem;">
+                                <input type="checkbox" checked disabled style="width: 16px; height: 16px;">
+                                <span><strong>BIMCV-R</strong> (5,340 patients)</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.25rem;">
+                                <input type="checkbox" checked disabled style="width: 16px; height: 16px;">
+                                <span><strong>MIDRC-RICORD</strong> (227 patients)</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.25rem;">
+                                <input type="checkbox" checked disabled style="width: 16px; height: 16px;">
+                                <span><strong>U-10</strong> (12,000 patients)</span>
+                            </label>
+                        </div>
+                        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); color: #f093fb; font-weight: 600;">
+                            3 datasets • 17K+ patients
+                        </div>
+                    </div>
+
+                    <!-- Universal Detection -->
+                    <div style="background: var(--bg-light); padding: 1.25rem; border-radius: 0.75rem; border-left: 4px solid #4facfe;">
+                        <h4 style="color: #4facfe; margin-bottom: 1rem; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <span>🔬</span> Universal Lesion Detection
+                        </h4>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.9rem;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.25rem;">
+                                <input type="checkbox" checked disabled style="width: 16px; height: 16px;">
+                                <span><strong>DeepLesion-1kTest3D</strong> (10,594 patients)</span>
+                            </label>
+                            <div style="color: var(--text-gray); font-size: 0.85rem; padding-left: 1.5rem; margin-top: 0.25rem;">
+                                • 1,000 test volumes<br>
+                                • 4,927 lesions<br>
+                                • 8 body regions
+                            </div>
+                        </div>
+                        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); color: #4facfe; font-weight: 600;">
+                            1 dataset • 10K+ patients
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary Stats -->
+                <div style="margin-top: 1.5rem; padding: 1.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 0.75rem; color: white;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; text-align: center;">
+                        <div>
+                            <div style="font-size: 2rem; font-weight: 700;">13</div>
+                            <div style="font-size: 0.9rem; opacity: 0.9;">Total Datasets</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 2rem; font-weight: 700;">✓</div>
+                            <div style="font-size: 0.9rem; opacity: 0.9;">All Available</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 2rem; font-weight: 700;">30K+</div>
+                            <div style="font-size: 0.9rem; opacity: 0.9;">CT Scans</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 2rem; font-weight: 700;">25K+</div>
+                            <div style="font-size: 0.9rem; opacity: 0.9;">Patients</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 2rem; font-weight: 700;">100%</div>
+                            <div style="font-size: 0.9rem; opacity: 0.9;">Open Access</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="search-filter">
+                <input type="text" class="search-box" id="searchInput" placeholder="Search datasets by name, condition, or modality...">
+                <select class="filter-select" id="modalityFilter">
+                    <option value="">All Modalities</option>
+                    <option value="CT">CT</option>
+                    <option value="LDCT">Low-Dose CT</option>
+                </select>
+                <select class="filter-select" id="conditionFilter">
+                    <option value="">All Conditions</option>
+                    <option value="lung">Lung Cancer/Nodules</option>
+                    <option value="covid">COVID-19</option>
+                    <option value="multi">Multi-Organ/Universal</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 1rem; color: var(--text-gray); text-align: right;">
+                Showing <span id="datasetCount" style="font-weight: 600; color: var(--primary);">13</span> datasets
+            </div>
+
+            <div id="datasetList">
+                <!-- Datasets will be rendered here by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>HAID</h4>
+                <p style="color: #94a3b8;">Health AI Data Resource - Democratizing access to high-quality medical imaging datasets</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <a href="#home">Home</a>
+                <a href="#discovery">Data Discovery</a>
+                <a href="https://github.com/fitushar/HAID">GitHub Repository</a>
+                <a href="https://zenodo.org/">Download Data</a>
+            </div>
+            <div class="footer-section">
+                <h4>Resources</h4>
+                <a href="https://github.com/fitushar/HAID#-installation--requirements">Documentation</a>
+                <a href="https://github.com/fitushar/HAID/blob/main/CONTRIBUTING.md">Contributing</a>
+                <a href="https://github.com/fitushar/HAID/issues">Support</a>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <p style="color: #94a3b8;">Dr. Fakrul Islam Tushar<br>
+                Email: fitushar.mi@gmail.com<br>
+                GitHub: @fitushar</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 HAID - Health AI Data Resource. Licensed under Apache 2.0</p>
+        </div>
+    </footer>
+
+    <!-- Dataset Detail Modal -->
+    <div class="modal" id="datasetModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+                <h2 id="modalTitle"></h2>
+                <p id="modalSubtitle" style="color: var(--text-gray); margin-top: 0.5rem;"></p>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Content will be injected by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const datasets = [
+            {
+                id: 1,
+                name: "NSCLC-Radiomics",
+                fullName: "Non-Small Cell Lung Cancer CT Imaging",
+                modality: "CT",
+                patients: 421,
+                scans: 421,
+                condition: "Lung Cancer",
+                country: "Netherlands",
+                status: "Available",
+                description: "Pre-treatment CT scans with multi-label segmentations including tumor, esophagus, heart, and lungs. Includes clinical metadata with TNM staging and survival data.",
+                tags: ["Lung Cancer", "Segmentation", "Radiomics", "Survival"],
+                doi: "10.5281/zenodo.18284366",
+                category: "lung",
+                features: [
+                    "Pre-treatment CT scans: 512×512×[88-176] voxels, ~0.977mm in-plane, 3mm slice thickness",
+                    "Multi-label segmentations: Gross Tumor Volume (GTV-1), Esophagus, Heart, Spinal Cord, Left & Right Lungs",
+                    "Clinical metadata: TNM staging, histology, survival time, demographics",
+                    "Bounding box annotations for tumor detection tasks",
+                    "Train/Validation/Test splits: 334/41/46 patients (stratified by histology)"
+                ],
+                source: "TCIA - The Cancer Imaging Archive",
+                zenodoLink: "https://zenodo.org/records/18284366",
+                githubDocs: "https://github.com/fitushar/HAID/blob/main/NSCLCR/DATASET_PROCESSING_DOCUMENTATION.md",
+                citation: `@article{aerts2014decoding,
+  title={Decoding tumour phenotype by noninvasive imaging using a quantitative radiomics approach},
+  author={Aerts, Hugo JWL and Velazquez, Emmanuel Rios and Leijenaar, Ralph TH and others},
+  journal={Nature Communications},
+  volume={5},
+  pages={4006},
+  year={2014},
+  doi={10.1038/ncomms5006}
+}`
+            },
+            {
+                id: 2,
+                name: "UniToChest",
+                fullName: "Expert-Annotated Lung Nodule Segmentation",
+                modality: "CT",
+                patients: 623,
+                scans: 715,
+                condition: "Lung Nodules",
+                country: "Italy",
+                status: "Available",
+                description: "10,071 expert-annotated nodules with comprehensive segmentation masks. Standardized preprocessing with 3D bounding boxes.",
+                tags: ["Lung Nodules", "Segmentation", "Detection"],
+                doi: "10.5281/zenodo.18285682",
+                category: "lung"
+            },
+            {
+                id: 3,
+                name: "IMDCT",
+                fullName: "Indeterminate Pulmonary Nodules Dataset",
+                modality: "CT",
+                patients: 2032,
+                scans: 2032,
+                condition: "Pulmonary Nodules",
+                country: "China",
+                status: "Available",
+                description: "Multi-institutional dataset with 100% histopathologically confirmed diagnoses. 78.6% malignant nodules with clinical metadata.",
+                tags: ["Lung Nodules", "Classification", "Multi-institutional"],
+                doi: "10.5281/zenodo.13908015",
+                category: "lung"
+            },
+            {
+                id: 4,
+                name: "LNDb v4",
+                fullName: "Lung Nodule Database v4",
+                modality: "CT",
+                patients: 294,
+                scans: 294,
+                condition: "Pulmonary Nodules",
+                country: "Portugal",
+                status: "Available",
+                description: "Multi-reader expert annotations with 9 radiological characteristics. Includes both radiological annotations and text report extractions.",
+                tags: ["Lung Nodules", "Multi-reader", "Radiological Features"],
+                doi: "Available on request",
+                category: "lung"
+            },
+            {
+                id: 5,
+                name: "BIMCV-R",
+                fullName: "Large-Scale Bilingual Radiology Reports",
+                modality: "CT",
+                patients: 5340,
+                scans: 8069,
+                condition: "Multi-label Findings",
+                country: "Spain",
+                status: "Available",
+                description: "8,069 CT scans with bilingual radiology reports (Spanish/English). Includes COVID-19, pneumonia, nodules, and 10+ radiological findings.",
+                tags: ["COVID-19", "Radiology Reports", "Multi-label", "Large-scale"],
+                doi: "10.1007/978-3-031-72120-5_12",
+                category: "covid"
+            },
+            {
+                id: 6,
+                name: "LUNGx",
+                fullName: "SPIE-AAPM Lung Nodule Classification",
+                modality: "CT",
+                patients: 83,
+                scans: 83,
+                condition: "Lung Nodule Classification",
+                country: "USA",
+                status: "Available",
+                description: "Challenge dataset with 100% pathology-confirmed diagnoses. 94 nodules with precise DICOM coordinates (57 benign, 37 malignant).",
+                tags: ["Lung Nodules", "Classification", "Pathology-confirmed"],
+                doi: "10.7937/K9/TCIA.2015.UZLSU3FL",
+                category: "lung"
+            },
+            {
+                id: 7,
+                name: "LIDC-IDRI",
+                fullName: "Lung Image Database Consortium",
+                modality: "CT",
+                patients: 875,
+                scans: 875,
+                condition: "Lung Nodule Detection",
+                country: "USA",
+                status: "Available",
+                description: "Benchmark dataset with multi-radiologist consensus annotations. Comprehensive nodule characterization with size, texture, malignancy ratings.",
+                tags: ["Lung Nodules", "Multi-radiologist", "Benchmark"],
+                doi: "10.7937/K9/TCIA.2015.LO9QL9SX",
+                category: "lung"
+            },
+            {
+                id: 8,
+                name: "LUNA25",
+                fullName: "Extended LUNA16 with AI Segmentation",
+                modality: "CT",
+                patients: 2020,
+                scans: 4069,
+                condition: "Lung Nodule Detection",
+                country: "Netherlands",
+                status: "Available",
+                description: "6,163 nodule annotations with PiNS deep learning segmentation + Vista3D organ segmentation. Extended benchmark dataset.",
+                tags: ["Lung Nodules", "AI Segmentation", "Multi-organ"],
+                doi: "10.5281/zenodo.18291811",
+                category: "lung"
+            },
+            {
+                id: 9,
+                name: "MIDRC-RICORD",
+                fullName: "Multi-Institutional COVID-19 Database",
+                modality: "CT",
+                patients: 227,
+                scans: 328,
+                condition: "COVID-19",
+                country: "USA",
+                status: "Available",
+                description: "RT-PCR confirmed COVID-19 cases with matched negative controls. Multi-institutional data from RSNA collaboration.",
+                tags: ["COVID-19", "RT-PCR Confirmed", "Multi-institutional"],
+                doi: "Available via MIDRC",
+                category: "covid"
+            },
+            {
+                id: 10,
+                name: "U-10",
+                fullName: "United-10 COVID-19 Collection",
+                modality: "CT",
+                patients: 12000,
+                scans: 12000,
+                condition: "COVID-19",
+                country: "Multi-national",
+                status: "Available",
+                description: "Unified collection of 10 public COVID-19 datasets with Virtual Imaging Trials. Pre-processed TFRecords format.",
+                tags: ["COVID-19", "Multi-dataset", "Virtual Trials", "Large-scale"],
+                doi: "10.5281/zenodo.14064172",
+                category: "covid"
+            },
+            {
+                id: 11,
+                name: "NLST-3D",
+                fullName: "National Lung Screening Trial 3D",
+                modality: "CT",
+                patients: 900,
+                scans: 969,
+                condition: "Lung Cancer Screening",
+                country: "USA",
+                status: "Available",
+                description: "Landmark screening trial data with 1,192 3D nodule annotations. Converted from 9,000+ 2D slice-level bounding boxes.",
+                tags: ["Lung Cancer", "Screening", "3D Annotations", "Multi-institutional"],
+                doi: "10.5281/zenodo.15320923",
+                category: "lung"
+            },
+            {
+                id: 12,
+                name: "DLCS 2024",
+                fullName: "Duke Lung Cancer Screening Dataset",
+                modality: "LDCT",
+                patients: 2061,
+                scans: 2061,
+                condition: "Lung Cancer Screening",
+                country: "USA",
+                status: "Available",
+                description: "Contemporary CT technology (2015-2021) with Lung-RADS scores. 2,487 annotated nodules with semiautomated annotation pipeline.",
+                tags: ["Lung Cancer", "Screening", "Lung-RADS", "Contemporary"],
+                doi: "10.5281/zenodo.13799069",
+                category: "lung"
+            },
+            {
+                id: 13,
+                name: "DeepLesion-1kTest3D",
+                fullName: "Universal Lesion Detection Dataset",
+                modality: "CT",
+                patients: 10594,
+                scans: 1000,
+                condition: "Universal Lesion Detection",
+                country: "USA",
+                status: "Available",
+                description: "4,927 lesions across 8 anatomical regions. Multi-organ universal detection with RECIST measurements. NIH Clinical Center data.",
+                tags: ["Universal Detection", "Multi-organ", "RECIST", "Large-scale"],
+                doi: "10.5281/zenodo.18292965",
+                category: "multi"
+            }
+        ];
+
+        let filteredDatasets = [...datasets];
+
+        function renderDatasets(datasetsToRender) {
+            const listContainer = document.getElementById('datasetList');
+            const countElement = document.getElementById('datasetCount');
+            
+            if (countElement) {
+                countElement.textContent = datasetsToRender.length;
+            }
+
+            if (!listContainer) return;
+
+            listContainer.innerHTML = datasetsToRender.map(dataset => `
+                <div class="dataset-list-item">
+                    <div class="dataset-list-header" onclick="toggleDataset(${dataset.id})">
+                        <div class="dataset-list-title-section">
+                            <div class="dataset-title">${dataset.name}</div>
+                            <div style="color: var(--text-gray); font-size: 0.95rem; margin-top: 0.25rem;">${dataset.fullName}</div>
+                        </div>
+                        <div class="dataset-list-badges">
+                            <span class="dataset-badge" style="background: var(--secondary);">${dataset.status}</span>
+                            <span class="dataset-badge" style="background: var(--primary);">${dataset.modality}</span>
+                            <span class="dataset-badge" style="background: #f59e0b; color: white;">${dataset.country}</span>
+                            <span class="expand-icon" id="icon-${dataset.id}">▼</span>
+                        </div>
+                    </div>
+
+                    <div class="dataset-list-body" id="body-${dataset.id}">
+                        <!-- Dataset Status Section -->
+                        <div class="dataset-section">
+                            <h4>📊 Dataset Status</h4>
+                            <div class="dataset-info-grid">
+                                <div class="info-box">
+                                    <div class="info-label">Modality</div>
+                                    <div class="info-value" style="font-size: 1rem;">${dataset.modality}</div>
+                                </div>
+                                <div class="info-box">
+                                    <div class="info-label">Patients</div>
+                                    <div class="info-value">${dataset.patients.toLocaleString()}</div>
+                                </div>
+                                <div class="info-box">
+                                    <div class="info-label">CT Scans</div>
+                                    <div class="info-value">${dataset.scans.toLocaleString()}</div>
+                                </div>
+                                <div class="info-box">
+                                    <div class="info-label">Condition</div>
+                                    <div class="info-value" style="font-size: 0.95rem;">${dataset.condition}</div>
+                                </div>
+                                <div class="info-box">
+                                    <div class="info-label">Source</div>
+                                    <div class="info-value" style="font-size: 0.9rem;">${dataset.source || dataset.country}</div>
+                                </div>
+                                <div class="info-box">
+                                    <div class="info-label">Status</div>
+                                    <div class="info-value" style="font-size: 1rem; color: var(--secondary);">✅ ${dataset.status}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="dataset-section">
+                            <h4>📝 Description</h4>
+                            <p style="color: var(--text-gray); line-height: 1.8;">${dataset.description}</p>
+                        </div>
+
+                        <!-- Dataset Features -->
+                        ${dataset.features ? `
+                        <div class="dataset-section">
+                            <h4>🔬 Dataset Features</h4>
+                            <ul class="feature-list">
+                                ${dataset.features.map(feature => `<li>${feature}</li>`).join('')}
+                            </ul>
+                        </div>
+                        ` : ''}
+
+                        <!-- Key Capabilities -->
+                        <div class="dataset-section">
+                            <h4>✨ Key Capabilities</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                                ${dataset.tags.map(tag => `<span class="tag" style="background: var(--primary); color: white; padding: 0.4rem 0.9rem; border-radius: 1rem; font-size: 0.85rem;">${tag}</span>`).join('')}
+                            </div>
+                        </div>
+
+                        <!-- Data Access -->
+                        <div class="dataset-section">
+                            <h4>📥 Data Access</h4>
+                            <ul class="feature-list" style="grid-template-columns: 1fr;">
+                                ${dataset.zenodoLink ? `<li><strong>Preprocessed Dataset:</strong> <a href="${dataset.zenodoLink}" target="_blank" style="color: var(--primary);">Zenodo Repository</a></li>` : ''}
+                                ${dataset.githubDocs ? `<li><strong>Processing Documentation:</strong> <a href="${dataset.githubDocs}" target="_blank" style="color: var(--primary);">GitHub Documentation</a></li>` : ''}
+                                <li><strong>DOI/Source:</strong> ${dataset.doi}</li>
+                            </ul>
+                        </div>
+
+                        <!-- Citation -->
+                        ${dataset.citation ? `
+                        <div class="dataset-section">
+                            <h4>📖 Citation</h4>
+                            <p style="color: var(--text-gray); margin-bottom: 0.5rem;">If you use this dataset, please cite:</p>
+                            <div class="citation-box">${dataset.citation}</div>
+                        </div>
+                        ` : ''}
+
+                        <!-- Action Buttons -->
+                        <div class="dataset-actions">
+                            ${dataset.githubDocs ? `
+                            <a href="${dataset.githubDocs}" target="_blank" class="btn" style="font-size: 0.9rem; padding: 0.6rem 1.25rem;">
+                                📚 View Documentation
+                            </a>
+                            ` : ''}
+                            ${dataset.zenodoLink ? `
+                            <a href="${dataset.zenodoLink}" target="_blank" class="btn" style="font-size: 0.9rem; padding: 0.6rem 1.25rem; background: var(--secondary);">
+                                💾 Download Dataset
+                            </a>
+                            ` : ''}
+                            <a href="https://github.com/fitushar/HAID" target="_blank" class="btn btn-secondary" style="font-size: 0.9rem; padding: 0.6rem 1.25rem; color: var(--primary); background: transparent; border: 2px solid var(--primary);">
+                                🔗 GitHub Repository
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleDataset(id) {
+            const body = document.getElementById(`body-${id}`);
+            const icon = document.getElementById(`icon-${id}`);
+            
+            if (body && icon) {
+                body.classList.toggle('expanded');
+                icon.classList.toggle('expanded');
+            }
+        }
+
+        function filterDatasets() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const modalityFilter = document.getElementById('modalityFilter').value;
+            const conditionFilter = document.getElementById('conditionFilter').value;
+
+            filteredDatasets = datasets.filter(dataset => {
+                const matchesSearch = dataset.name.toLowerCase().includes(searchTerm) ||
+                                    dataset.fullName.toLowerCase().includes(searchTerm) ||
+                                    dataset.condition.toLowerCase().includes(searchTerm) ||
+                                    dataset.tags.some(tag => tag.toLowerCase().includes(searchTerm));
+                
+                const matchesModality =
