@@ -1517,4 +1517,22 @@
                                     dataset.condition.toLowerCase().includes(searchTerm) ||
                                     dataset.tags.some(tag => tag.toLowerCase().includes(searchTerm));
                 
-                const matchesModality =
+                const matchesModality = modalityFilter === '' || dataset.modality === modalityFilter;
+                const matchesCondition = conditionFilter === '' || dataset.condition.toLowerCase().includes(conditionFilter);
+                
+                return matchesSearch && matchesModality && matchesCondition;
+            });
+            
+            renderDatasets();
+        }
+
+        // Event listeners
+        document.getElementById('searchInput').addEventListener('input', filterDatasets);
+        document.getElementById('modalityFilter').addEventListener('change', filterDatasets);
+        document.getElementById('conditionFilter').addEventListener('change', filterDatasets);
+
+        // Initial render
+        renderDatasets();
+    </script>
+</body>
+</html>
