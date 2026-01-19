@@ -184,13 +184,195 @@
             flex-wrap: wrap;
         }
 
-        .search-box {
+        .search-box-container {
+            position: relative;
             flex: 1;
             min-width: 300px;
+        }
+
+        .search-box {
+            width: 100%;
             padding: 0.75rem 1rem;
             border: 1px solid var(--border);
             border-radius: 0.5rem;
             font-size: 1rem;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .autocomplete-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid var(--border);
+            border-top: none;
+            border-radius: 0 0 0.5rem 0.5rem;
+            max-height: 400px;
+            overflow-y: auto;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none;
+        }
+
+        .autocomplete-suggestions.show {
+            display: block;
+        }
+
+        .suggestion-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--bg-light);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        .suggestion-item:hover {
+            background: var(--bg-light);
+        }
+
+        .suggestion-name {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .suggestion-details {
+            font-size: 0.85rem;
+            color: var(--text-gray);
+        }
+
+        .suggestion-meta {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .suggestion-badge {
+            background: var(--bg-light);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            color: var(--text-gray);
+        }
+
+        .dataset-detail-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .dataset-detail-modal.show {
+            display: flex;
+        }
+
+        .dataset-detail-content {
+            background: white;
+            border-radius: 1rem;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .dataset-detail-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 1rem 1rem 0 0;
+            position: relative;
+        }
+
+        .dataset-detail-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 2rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .dataset-detail-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .dataset-detail-body {
+            padding: 2rem;
+        }
+
+        .detail-section {
+            margin-bottom: 2rem;
+        }
+
+        .detail-section h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+
+        .detail-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-box {
+            background: var(--bg-light);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-gray);
+            margin-top: 0.25rem;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background: var(--bg-light);
+            border-radius: 0.5rem;
+            border-left: 3px solid var(--primary);
         }
 
         .filter-select {
@@ -1085,7 +1267,10 @@
             </div>
 
             <div class="search-filter">
-                <input type="text" class="search-box" id="searchInput" placeholder="Search datasets by name, condition, or modality...">
+                <div class="search-box-container">
+                    <input type="text" class="search-box" id="searchInput" placeholder="Type dataset name for suggestions..." autocomplete="off">
+                    <div class="autocomplete-suggestions" id="autocompleteSuggestions"></div>
+                </div>
                 <select class="filter-select" id="modalityFilter">
                     <option value="">All Modalities</option>
                     <option value="CT">CT (including Low-Dose)</option>
@@ -1149,6 +1334,20 @@
                 <p id="modalSubtitle" style="color: var(--text-gray); margin-top: 0.5rem;"></p>
             </div>
             <div class="modal-body" id="modalBody">
+                <!-- Content will be injected by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Dataset Detail Modal (New) -->
+    <div class="dataset-detail-modal" id="datasetDetailModal">
+        <div class="dataset-detail-content">
+            <div class="dataset-detail-header">
+                <button class="dataset-detail-close" onclick="closeDatasetDetail()">&times;</button>
+                <h2 id="detailTitle" style="margin-bottom: 0.5rem;"></h2>
+                <p id="detailSubtitle" style="opacity: 0.9;"></p>
+            </div>
+            <div class="dataset-detail-body" id="detailBody">
                 <!-- Content will be injected by JavaScript -->
             </div>
         </div>
@@ -1525,8 +1724,206 @@
             renderDatasets();
         }
 
+        // Autocomplete functionality
+        let selectedSuggestionIndex = -1;
+        const searchInput = document.getElementById('searchInput');
+        const suggestionsContainer = document.getElementById('autocompleteSuggestions');
+
+        function showDatasetDetail(datasetId) {
+            const dataset = datasets.find(d => d.id === datasetId);
+            if (!dataset) return;
+
+            const modal = document.getElementById('datasetDetailModal');
+            const title = document.getElementById('detailTitle');
+            const subtitle = document.getElementById('detailSubtitle');
+            const body = document.getElementById('detailBody');
+
+            title.textContent = dataset.name;
+            subtitle.textContent = dataset.fullName;
+
+            // Build detailed content
+            let content = `
+                <div class="detail-stats">
+                    <div class="stat-box">
+                        <div class="stat-value">${dataset.patients}</div>
+                        <div class="stat-label">Patients</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value">${dataset.scans}</div>
+                        <div class="stat-label">CT Scans</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value">${dataset.modality}</div>
+                        <div class="stat-label">Modality</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value">${dataset.country}</div>
+                        <div class="stat-label">Location</div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h3>📋 Description</h3>
+                    <p style="color: var(--text-gray); line-height: 1.8;">${dataset.description}</p>
+                </div>
+
+                <div class="detail-section">
+                    <h3>✨ Key Features</h3>
+                    <ul class="feature-list">
+                        ${dataset.features.map(feature => `<li>${feature}</li>`).join('')}
+                    </ul>
+                </div>
+
+                <div class="detail-section">
+                    <h3>🏷️ Tags</h3>
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        ${dataset.tags.map(tag => `<span class="suggestion-badge">${tag}</span>`).join('')}
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h3>📥 Access Dataset</h3>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        ${dataset.zenodoLink ? `
+                            <a href="${dataset.zenodoLink}" target="_blank" style="background: var(--secondary); color: white; padding: 0.75rem 1.5rem; border-radius: 0.5rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem;">
+                                💾 Download from Zenodo
+                            </a>
+                        ` : ''}
+                        ${dataset.githubDocs ? `
+                            <a href="${dataset.githubDocs}" target="_blank" style="background: white; color: var(--primary); padding: 0.75rem 1.5rem; border: 2px solid var(--primary); border-radius: 0.5rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem;">
+                                📚 View Documentation
+                            </a>
+                        ` : ''}
+                        <a href="https://github.com/fitushar/HAID" target="_blank" style="background: #333; color: white; padding: 0.75rem 1.5rem; border-radius: 0.5rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem;">
+                            🔗 GitHub Repository
+                        </a>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h3>📚 Citation</h3>
+                    <div style="background: #f1f5f9; padding: 1rem; border-radius: 0.5rem; font-family: 'Courier New', monospace; font-size: 0.85rem; overflow-x: auto; white-space: pre-wrap; color: #334155;">${dataset.citation}</div>
+                    <button onclick="copyToClipboard(\`${dataset.citation.replace(/`/g, '\\`')}\`)" style="margin-top: 0.5rem; padding: 0.5rem 1rem; background: var(--primary); color: white; border: none; border-radius: 0.25rem; cursor: pointer;">
+                        📋 Copy Citation
+                    </button>
+                </div>
+
+                <div class="detail-section">
+                    <h3>🔗 Source</h3>
+                    <p style="color: var(--text-gray);"><strong>${dataset.source}</strong></p>
+                    <p style="color: var(--text-gray); font-size: 0.9rem; margin-top: 0.5rem;">DOI: <a href="https://doi.org/${dataset.doi}" target="_blank" style="color: var(--primary);">${dataset.doi}</a></p>
+                </div>
+            `;
+
+            body.innerHTML = content;
+            modal.classList.add('show');
+        }
+
+        function closeDatasetDetail() {
+            document.getElementById('datasetDetailModal').classList.remove('show');
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Citation copied to clipboard!');
+            });
+        }
+
+        function updateAutocomplete() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            
+            if (searchTerm.length < 2) {
+                suggestionsContainer.classList.remove('show');
+                return;
+            }
+
+            const matches = datasets.filter(dataset =>
+                dataset.name.toLowerCase().includes(searchTerm) ||
+                dataset.fullName.toLowerCase().includes(searchTerm) ||
+                dataset.condition.toLowerCase().includes(searchTerm)
+            ).slice(0, 5); // Limit to 5 suggestions
+
+            if (matches.length === 0) {
+                suggestionsContainer.classList.remove('show');
+                return;
+            }
+
+            suggestionsContainer.innerHTML = matches.map((dataset, index) => `
+                <div class="suggestion-item" data-index="${index}" data-id="${dataset.id}" onclick="selectDataset(${dataset.id})">
+                    <div class="suggestion-name">${dataset.name}</div>
+                    <div class="suggestion-details">${dataset.fullName}</div>
+                    <div class="suggestion-meta">
+                        <span class="suggestion-badge">${dataset.patients} patients</span>
+                        <span class="suggestion-badge">${dataset.condition}</span>
+                        <span class="suggestion-badge">${dataset.country}</span>
+                    </div>
+                </div>
+            `).join('');
+
+            suggestionsContainer.classList.add('show');
+            selectedSuggestionIndex = -1;
+        }
+
+        function selectDataset(datasetId) {
+            const dataset = datasets.find(d => d.id === datasetId);
+            if (dataset) {
+                searchInput.value = dataset.name;
+                suggestionsContainer.classList.remove('show');
+                showDatasetDetail(datasetId);
+            }
+        }
+
         // Event listeners
-        document.getElementById('searchInput').addEventListener('input', filterDatasets);
+        searchInput.addEventListener('input', function() {
+            updateAutocomplete();
+            filterDatasets();
+        });
+
+        searchInput.addEventListener('keydown', function(e) {
+            const suggestions = suggestionsContainer.querySelectorAll('.suggestion-item');
+            
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                selectedSuggestionIndex = Math.min(selectedSuggestionIndex + 1, suggestions.length - 1);
+                updateSelectedSuggestion();
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                selectedSuggestionIndex = Math.max(selectedSuggestionIndex - 1, -1);
+                updateSelectedSuggestion();
+            } else if (e.key === 'Enter' && selectedSuggestionIndex >= 0) {
+                e.preventDefault();
+                const selectedId = parseInt(suggestions[selectedSuggestionIndex].getAttribute('data-id'));
+                selectDataset(selectedId);
+            } else if (e.key === 'Escape') {
+                suggestionsContainer.classList.remove('show');
+            }
+        });
+
+        function updateSelectedSuggestion() {
+            const suggestions = suggestionsContainer.querySelectorAll('.suggestion-item');
+            suggestions.forEach((item, index) => {
+                if (index === selectedSuggestionIndex) {
+                    item.style.background = 'rgba(37, 99, 235, 0.1)';
+                } else {
+                    item.style.background = '';
+                }
+            });
+        }
+
+        // Close suggestions when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!searchInput.contains(e.target) && !suggestionsContainer.contains(e.target)) {
+                suggestionsContainer.classList.remove('show');
+            }
+        });
+
+        // Close detail modal when clicking outside
+        document.getElementById('datasetDetailModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDatasetDetail();
+            }
+        });
+
         document.getElementById('modalityFilter').addEventListener('change', filterDatasets);
         document.getElementById('conditionFilter').addEventListener('change', filterDatasets);
 
