@@ -384,6 +384,217 @@
             cursor: pointer;
         }
 
+        .selected-dataset-details {
+            display: none;
+            background: white;
+            border: 2px solid var(--primary);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-lg);
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .selected-dataset-details.show {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .details-header {
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .details-header h2 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+        }
+
+        .details-header p {
+            color: var(--text-gray);
+            font-size: 1.1rem;
+        }
+
+        .details-close-btn {
+            background: var(--text-gray);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            float: right;
+            font-size: 0.9rem;
+            transition: background 0.3s;
+        }
+
+        .details-close-btn:hover {
+            background: var(--text-dark);
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .details-stat-box {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            text-align: center;
+        }
+
+        .details-stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .details-stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .details-section {
+            margin-bottom: 2rem;
+        }
+
+        .details-section h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .details-features {
+            background: var(--bg-light);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+        }
+
+        .details-features ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .details-features li {
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            background: white;
+            border-radius: 0.5rem;
+            border-left: 4px solid var(--primary);
+            line-height: 1.6;
+        }
+
+        .details-features li strong {
+            color: var(--primary);
+        }
+
+        .details-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+
+        .details-btn {
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .details-btn-primary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .details-btn-primary:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .details-btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .details-btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .details-btn-dark {
+            background: #1f2937;
+            color: white;
+        }
+
+        .details-btn-dark:hover {
+            background: #111827;
+        }
+
+        .details-citation {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            border: 1px solid var(--border);
+            position: relative;
+        }
+
+        .details-citation pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            margin: 1rem 0;
+        }
+
+        .copy-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: var(--primary-dark);
+        }
+
         .dataset-list-item {
             background: var(--bg-white);
             border: 1px solid var(--border);
@@ -1283,6 +1494,11 @@
                 </select>
             </div>
 
+            <!-- Selected Dataset Details Section -->
+            <div class="selected-dataset-details" id="selectedDatasetDetails">
+                <!-- Content will be dynamically inserted here -->
+            </div>
+
             <div style="margin-bottom: 1rem; color: var(--text-gray); text-align: right;">
                 Showing <span id="datasetCount" style="font-weight: 600; color: var(--primary);">13</span> datasets
             </div>
@@ -1869,8 +2085,130 @@
             if (dataset) {
                 searchInput.value = dataset.name;
                 suggestionsContainer.classList.remove('show');
-                showDatasetDetail(datasetId);
+                
+                // Show detailed information in the box
+                showDatasetDetailsBox(dataset);
+                
+                // Optionally still open the modal
+                // showDatasetDetail(datasetId);
             }
+        }
+
+        function showDatasetDetailsBox(dataset) {
+            const detailsBox = document.getElementById('selectedDatasetDetails');
+            
+            const content = `
+                <button class="details-close-btn" onclick="closeDatasetDetailsBox()">✕ Close</button>
+                
+                <div class="details-header">
+                    <h2>${dataset.name}</h2>
+                    <p>${dataset.fullName}</p>
+                </div>
+
+                <div class="details-grid">
+                    <div class="details-stat-box">
+                        <div class="details-stat-value">${dataset.patients.toLocaleString()}</div>
+                        <div class="details-stat-label">Patients</div>
+                    </div>
+                    <div class="details-stat-box">
+                        <div class="details-stat-value">${dataset.scans.toLocaleString()}</div>
+                        <div class="details-stat-label">CT Scans</div>
+                    </div>
+                    <div class="details-stat-box">
+                        <div class="details-stat-value">${dataset.modality}</div>
+                        <div class="details-stat-label">Modality</div>
+                    </div>
+                    <div class="details-stat-box">
+                        <div class="details-stat-value">${dataset.country}</div>
+                        <div class="details-stat-label">Location</div>
+                    </div>
+                </div>
+
+                <div class="details-section">
+                    <h3>📋 Overview</h3>
+                    <p style="color: var(--text-gray); line-height: 1.8; font-size: 1.05rem;">${dataset.description}</p>
+                    <div style="margin-top: 1rem;">
+                        <strong style="color: var(--text-dark);">Source:</strong> 
+                        <span style="color: var(--text-gray);">${dataset.source}</span>
+                    </div>
+                    <div style="margin-top: 0.5rem;">
+                        <strong style="color: var(--text-dark);">DOI:</strong> 
+                        <a href="https://doi.org/${dataset.doi}" target="_blank" style="color: var(--primary);">${dataset.doi}</a>
+                    </div>
+                    <div style="margin-top: 0.5rem;">
+                        <strong style="color: var(--text-dark);">Condition:</strong> 
+                        <span style="color: var(--text-gray);">${dataset.condition}</span>
+                    </div>
+                    <div style="margin-top: 0.5rem;">
+                        <strong style="color: var(--text-dark);">Status:</strong> 
+                        <span style="color: var(--secondary); font-weight: 600;">✅ ${dataset.status}</span>
+                    </div>
+                </div>
+
+                <div class="details-section">
+                    <h3>✨ Key Features & Specifications</h3>
+                    <div class="details-features">
+                        <ul>
+                            ${dataset.features.map(feature => `<li>${feature}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="details-section">
+                    <h3>🏷️ Research Tags</h3>
+                    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                        ${dataset.tags.map(tag => `
+                            <span style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; padding: 0.5rem 1rem; border-radius: 2rem; font-size: 0.9rem; font-weight: 500;">
+                                ${tag}
+                            </span>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="details-section">
+                    <h3>📚 Citation</h3>
+                    <div class="details-citation">
+                        <p style="color: var(--text-gray); margin-bottom: 1rem;">If you use this dataset, please cite:</p>
+                        <pre>${dataset.citation}</pre>
+                        <button class="copy-btn" onclick="copyToClipboard(\`${dataset.citation.replace(/`/g, '\\`')}\`)">
+                            📋 Copy Citation
+                        </button>
+                    </div>
+                </div>
+
+                <div class="details-section">
+                    <h3>📥 Access Dataset</h3>
+                    <div class="details-buttons">
+                        ${dataset.zenodoLink ? `
+                            <a href="${dataset.zenodoLink}" target="_blank" class="details-btn details-btn-primary">
+                                💾 Download from Zenodo
+                            </a>
+                        ` : ''}
+                        ${dataset.githubDocs ? `
+                            <a href="${dataset.githubDocs}" target="_blank" class="details-btn details-btn-secondary">
+                                📚 View Documentation
+                            </a>
+                        ` : ''}
+                        <a href="https://github.com/fitushar/HAID" target="_blank" class="details-btn details-btn-dark">
+                            🔗 GitHub Repository
+                        </a>
+                    </div>
+                </div>
+            `;
+            
+            detailsBox.innerHTML = content;
+            detailsBox.classList.add('show');
+            
+            // Scroll to the details box smoothly
+            setTimeout(() => {
+                detailsBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+        }
+
+        function closeDatasetDetailsBox() {
+            const detailsBox = document.getElementById('selectedDatasetDetails');
+            detailsBox.classList.remove('show');
+            searchInput.value = '';
         }
 
         // Event listeners
